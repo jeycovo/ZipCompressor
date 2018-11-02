@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileFilter;
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 /*
@@ -21,11 +22,17 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     /**
      * Creates new form VentanaPrincipal
      */
-    private File[] origen;
+    private final JFileChooser fc;
+    private File origen;
     private File destino;
+    private final boolean SALIDA = false;
+    private final boolean ENTRADA = true;
     
     public VentanaPrincipal() {
         initComponents();
+        //Inicilización del JFileChooser
+        this.fc = new JFileChooser();
+        this.fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
     }
 
     /**
@@ -46,8 +53,10 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         jButtonComprimir = new javax.swing.JButton();
         jLabelProgressDocs = new javax.swing.JLabel();
         jLabelProgressDir = new javax.swing.JLabel();
+        jLabelMensajeError = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setResizable(false);
 
         botonBuscarDocs.setText("Buscar");
         botonBuscarDocs.addActionListener(new java.awt.event.ActionListener() {
@@ -65,7 +74,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 
         jTextDocs.setEditable(false);
         jTextDocs.setBackground(java.awt.Color.white);
-        jTextDocs.setText("Directorio de los archivos...");
+        jTextDocs.setText("Carpeta a comprimir...");
         jTextDocs.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jTextDocsActionPerformed(evt);
@@ -75,9 +84,10 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         jTextDir.setEditable(false);
         jTextDir.setBackground(java.awt.Color.white);
         jTextDir.setForeground(new java.awt.Color(20, 20, 20));
-        jTextDir.setText("Directorio del Zip...");
+        jTextDir.setText("Carpeta destino...");
 
         jButtonComprimir.setText("Comprimir");
+        jButtonComprimir.setEnabled(false);
         jButtonComprimir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonComprimirActionPerformed(evt);
@@ -88,66 +98,66 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 
         jLabelProgressDir.setText("0%");
 
+        jLabelMensajeError.setToolTipText("");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jTextDocs, javax.swing.GroupLayout.PREFERRED_SIZE, 395, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(botonBuscarDocs, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(10, 10, 10)
-                        .addComponent(jLabelProgressDir, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jProgressDir, javax.swing.GroupLayout.PREFERRED_SIZE, 360, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(jLabelProgressDocs, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 0, Short.MAX_VALUE))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addGap(0, 0, Short.MAX_VALUE)
-                                .addComponent(jProgressDocs, javax.swing.GroupLayout.PREFERRED_SIZE, 360, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(jTextDir, javax.swing.GroupLayout.PREFERRED_SIZE, 395, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jTextDocs, javax.swing.GroupLayout.PREFERRED_SIZE, 395, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabelProgressDocs, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabelProgressDir, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jProgressDocs, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jProgressDir, javax.swing.GroupLayout.PREFERRED_SIZE, 360, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE))))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                        .addComponent(jTextDir, javax.swing.GroupLayout.PREFERRED_SIZE, 395, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(jLabelMensajeError, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(botonBuscarDocs, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(botonBuscarDir, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jButtonComprimir, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(33, 33, 33)
+                .addGap(19, 19, 19)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(botonBuscarDocs)
                     .addComponent(jTextDocs, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(botonBuscarDir)
-                    .addComponent(jTextDir, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jTextDir, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(botonBuscarDir))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabelMensajeError)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 13, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(12, 12, 12)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabelProgressDocs)
                             .addComponent(jProgressDocs, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(12, 12, 12)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jProgressDir, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabelProgressDir, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                            .addComponent(jLabelProgressDir)))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(18, 18, 18)
+                        .addGap(6, 6, 6)
                         .addComponent(jButtonComprimir)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(27, Short.MAX_VALUE))
         );
 
         pack();
@@ -158,15 +168,17 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_jTextDocsActionPerformed
 
     private void botonBuscarDocsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonBuscarDocsActionPerformed
-        selDirOrigen();
+        selDir(ENTRADA);
+        dirComprobacion();
     }//GEN-LAST:event_botonBuscarDocsActionPerformed
 
     private void botonBuscarDirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonBuscarDirActionPerformed
-        selDirDestino();
+        selDir(SALIDA);
+        dirComprobacion();
     }//GEN-LAST:event_botonBuscarDirActionPerformed
 
     private void jButtonComprimirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonComprimirActionPerformed
-        // TODO add your handling code here:
+        comprimir();
     }//GEN-LAST:event_jButtonComprimirActionPerformed
     
     /**
@@ -204,39 +216,57 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         });
     }
     
-    private void selDirOrigen(){
-        
-        JFileChooser fc = new JFileChooser();
-        if(!fc.isMultiSelectionEnabled()) fc.setMultiSelectionEnabled(true);
+    private void selDir(boolean a){
+        if(a == ENTRADA){
+            if(origen != null){
+                fc.setCurrentDirectory(origen);
+            }
+        }else{
+            if(destino != null){
+                fc.setCurrentDirectory(destino);
+            }
+        }
         
         int res = fc.showOpenDialog(null);
         if(res == JFileChooser.APPROVE_OPTION) {
-            System.out.println("Se han seleccionado los archivos...");
-            this.origen = fc.getSelectedFiles();
-            for(int i = 0; i < origen.length; i++){
-                System.out.println("Se ha seleccionado el fichero nº " + i +" :"+ origen[i].getName());
+            System.out.println("Se ha seleccionado un directorio: " + fc.getSelectedFile());
+            if (a == ENTRADA){
+                this.origen = fc.getSelectedFile();
+                jTextDocs.setText(this.origen.toString());
+            }else{
+                this.destino = fc.getSelectedFile();
+                jTextDir.setText(this.destino.toString());
             }
         }else{
             System.out.println("No se ha seleccionado nada.");
         }  
     }
-    private void selDirDestino(){
-        JFileChooser fc = new JFileChooser();
-        fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        
-        int res = fc.showOpenDialog(null);
-        if(res == JFileChooser.APPROVE_OPTION) {
-            System.out.println("Se ha seleccionado el directorio destino");
-            this.destino = fc.getSelectedFile();
-            System.out.println("Se ha seleccionado el fichero:"+ destino.getName());
+    private void dirComprobacion(){
+        if(jButtonComprimir.isEnabled()) jButtonComprimir.setEnabled(false);
+        if(!origen.exists()){
+            jLabelMensajeError.setText("La carpeta a comprimir debe existir...");
+            origen = null;
         }else{
-            System.out.println("No se ha seleccionado nada.");
-        }  
+            if(origen != null && destino != null){
+                if(origen.equals(destino)){
+                    jLabelMensajeError.setText("Selecciona carpetas distintas...");
+                }else{
+                    jButtonComprimir.setEnabled(true);
+                    if(jLabelMensajeError.getText() != ""){
+                        jLabelMensajeError.setText("");
+                    }
+                }
+            }
+        }
+    }
+    private void comprimir(){
+        
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton botonBuscarDir;
     private javax.swing.JButton botonBuscarDocs;
     private javax.swing.JButton jButtonComprimir;
+    private javax.swing.JLabel jLabelMensajeError;
     private javax.swing.JLabel jLabelProgressDir;
     private javax.swing.JLabel jLabelProgressDocs;
     private javax.swing.JProgressBar jProgressDir;
